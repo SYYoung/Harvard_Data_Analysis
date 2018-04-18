@@ -69,5 +69,24 @@ ex_time3 <- function() {
 }
 
 ex_trans1 <- function() {
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    past_year <- 1970
+    s <- gapminder %>% filter(year==past_year & !is.na(gdp))
+    p <- ggplot(s,aes(log2(dollars_per_day)) )
+    p <- p + geom_histogram(binwidth=1,color="black")
     
+    p
+}
+
+# instead of transform the data before plotting,
+# we use the log scale on the axis
+ex_trans2 <- function() {
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    past_year <- 2010
+    s <- gapminder %>% filter(year==past_year & !is.na(gdp))
+    p <- ggplot(s, aes(dollars_per_day)) 
+    p <- p + geom_histogram(binwidth=1,color="black")
+    p <- p + scale_x_continuous(trans="log2")
+    
+    p
 }
