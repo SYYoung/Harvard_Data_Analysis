@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "howToPlot <- function() {\n    r <- murders %>% summarize(rate=sum(total)/sum(population) * 10^6) %>% .$rate\n    \n    p <- murders %>% ggplot(aes(population/10^6, total, label=abb))\n    \n    p <- p + geom_abline(intercept=log10(r), lty=2, color=\"darkgrey\") \n    p <- p+ geom_point(aes(col=region), size=3)\n    # since we have ggrepel, we use it instead of geom_text\n    # p <- p + geom_text(nudge_x = 0.05)\n    p <- p + geom_text_repel()\n    p <- p + scale_x_log10() + scale_y_log10()\n    p <- p + xlab(\"Pop in million (log10)\")\n    p <- p + ylab(\"total num of murders in log10\")\n    p <- p + ggtitle(\"US gun murders in US 2010\")\n    p <- p + scale_color_discrete(name=\"Region\")\n    \n    p <- p + theme_economist()\n    \n    p\n}\n\nloadTheme <- function() {\n    # install packages if not\n    # install.packages(\"ggthemes\")\n    # install.packages(\"ggrepel\")\n    library(ggthemes)\n    library(ggrepel)\n    library(gridExtra)\n}\n\naddon <- function() {\n    howToPlot()\n}\n\nplotHist <- function() {\n    data(murders)\n    p <- heights %>% filter(sex==\"Male\") %>% ggplot(aes(x=height))\n    p <- p + geom_histogram(binwidth = 1, fill=\"blue\", col=\"black\")\n    p <- p + xlab(\"Male heights in inches\")\n    p <- p + ggtitle(\"Histogram\")\n    \n    p\n}\n\nplotDensity <- function() {\n    data(murders)\n    p <- heights %>% filter(sex==\"Male\") %>% ggplot(aes(x=height))\n    p <- p + geom_density(fill=\"blue\")\n    p <- p + xlab(\"Male heights in inches\")\n    p <- p + ggtitle(\"Histogram\")\n    \n    p\n}\n\nplotqq <- function() {\n    data(murders)\n    params <- heights %>% filter(sex==\"Male\") %>% summarize(mean=mean(height),sd=sd(height))\n    p <- heights %>% filter(sex==\"Male\") %>% ggplot(aes(sample=scale(height)))\n    p <- p + geom_qq(dparams=params)\n    p <- p + xlab(\"Male heights in inches\")\n    p <- p + ggtitle(\"Histogram\")\n    p <- p + geom_abline()\n    p\n}\n\nplotGrid <- function() {\n    data(murders)\n    p <- heights %>% filter(sex==\"Male\") %>% ggplot(aes(x=height))\n    p1 <- p + geom_histogram(binwidth=1,fill=\"blue\", col=\"black\")\n    p2 <- p + geom_histogram(binwidth=2,fill=\"blue\",col=\"black\")\n    p3 <- p + geom_histogram(binwidth=3,fill=\"blue\",col=\"black\")\n    # assume library is installed: gridExtra\n    grid.arrange(p1, p2, p3, ncol=3)\n    \n}\n",
+    "created" : 1523941944087.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1054423471",
+    "id" : "ECB6BDED",
+    "lastKnownWriteTime" : 1523946287,
+    "last_content_update" : 1523946287480,
+    "path" : "~/Desktop/c/EdX/PH125_2x/Intro to Visualization/classnote.R",
+    "project_path" : "classnote.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
