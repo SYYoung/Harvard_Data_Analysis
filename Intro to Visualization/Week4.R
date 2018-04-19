@@ -90,3 +90,37 @@ ex_trans2 <- function() {
     
     p
 }
+
+ex_stratify <- function() {
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    past_year <- 2010
+    s <- gapminder %>% filter(year==past_year & !is.na(gdp))
+    p <- ggplot(s, aes(region, dollars_per_day)) 
+    p <- p + geom_boxplot()
+    p <- p + theme(axis.text.x=element_text(angle=90,hjust=1))
+    
+    p
+}
+
+ex_mean <- function() {
+    fac <- factor(c("Asia","Asia","West","West","West"))
+    levels(fac)
+    value <- c(10,11,12,6,4)
+    fac <- reorder(fac, value, FUN=mean)
+    levels(fac)
+}
+
+ex_stratify2 <- function() {
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    
+    past_year <- 1970
+    s <- gapminder %>% filter(year==past_year & !is.na(gdp))
+    s <- mutate(s,region=reorder(region,dollars_per_day,FUN=median))
+    p <- ggplot(s, aes(region, dollars_per_day,fill=continent)) 
+    p <- p + geom_boxplot()
+    p <- p + theme(axis.text.x=element_text(angle=90,hjust=1))
+    p <- p + scale_y_continuous(trans="log2")
+    p <- p + xlab("")
+    
+    p
+}
