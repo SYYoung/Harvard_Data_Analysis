@@ -121,6 +121,76 @@ ex_stratify2 <- function() {
     p <- p + theme(axis.text.x=element_text(angle=90,hjust=1))
     p <- p + scale_y_continuous(trans="log2")
     p <- p + xlab("")
+    ## to show the indiv point for each country
+    p <- p + geom_point(show.legend = FALSE)
     
+    p
+}
+
+ex_comp_dist <- function() {
+    west <- c("Western Europe", "Northern Europe", "Southern Europe")
+    west <- c(west, "Northern America", "Australia and New Zealand")
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    past_year <- 1970
+    s <- gapminder %>% filter(year==past_year & !is.na(gdp))
+    s <- mutate(s, group=ifelse(region%in%west, "West", "Developing"))
+    p <- ggplot(s, aes(dollars_per_day))
+    p <- p + geom_histogram(binwidth=1,color="black")
+    p <- p + scale_x_continuous(trans="log2")
+    p <- p + facet_grid(.~group)
+    
+    p
+}
+
+ex_comp_dist2 <- function() {
+    west <- c("Western Europe", "Northern Europe", "Southern Europe")
+    west <- c(west, "Northern America", "Australia and New Zealand")
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    past_year <- 1970
+    present_year <- 2010
+    s <- gapminder %>% filter(year %in% c(past_year,present_year) & !is.na(gdp))
+    s <- mutate(s, group=ifelse(region%in%west, "West", "Developing"))
+    p <- ggplot(s, aes(dollars_per_day))
+    p <- p + geom_histogram(binwidth=1,color="black")
+    p <- p + scale_x_continuous(trans="log2")
+    p <- p + facet_grid(year~group)
+    
+    p
+}
+
+ex_comp_dist3 <- function() {
+    past_year <- 1970
+    present_year <- 2010
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    country_list_1 <- gapminder %>% filter(year==past_year & !is.na(dollars_per_day)) %>% .$country
+    country_list_2 <- gapminder %>% filter(year==present_year & !is.na(dollars_per_day)) %>% .$country
+    country_list <- intersect(country_list_1, country_list_2)
+    west <- c("Western Europe", "Northern Europe", "Southern Europe")
+    west <- c(west, "Northern America", "Australia and New Zealand")
+    
+    s <- gapminder %>% filter(year %in% c(past_year,present_year) & country %in% country_list)
+    s <- mutate(s, group=ifelse(region%in%west, "West", "Developing"))
+    p <- ggplot(s, aes(dollars_per_day))
+    p <- p + geom_histogram(binwidth=1,color="black")
+    p <- p + scale_x_continuous(trans="log2")
+    p <- p + facet_grid(year~group)
+    
+    p
+}
+
+ex_comp_dist4 <- function() {
+    past_year <- 1970
+    present_year <- 2010
+    gapminder <- gapminder %>% mutate(dollars_per_day=gdp/population/365)
+    country_list_1 <- gapminder %>% filter(year==past_year & !is.na(dollars_per_day)) %>% .$country
+    country_list_2 <- gapminder %>% filter(year==present_year & !is.na(dollars_per_day)) %>% .$country
+    country_list <- intersect(country_list_1, country_list_2)
+    s <- gapminder %>% filter(year %in% c(past_year,present_year) & country %in% country_list)
+    s <- mutate(s, region=reorder(region,dollars_per_day,FUN=median)) 
+    p <- ggplot(s) 
+    p <- p + theme(axis.text.x = element_text(angle=90,hjust=1))
+    p <- p + xlab("") + scale_y_continuous((trans="log2"))
+    p <- p + geom_boxplot(aes(region,dollars_per_day,fill=factor(year)))
+    #p <- p + facet_grid(year~.)
     p
 }
