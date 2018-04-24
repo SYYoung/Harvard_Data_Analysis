@@ -213,3 +213,34 @@ ex_density1 <- function() {
     
     p
 }
+
+ex_casewhen <- function() {
+    west <- c("Western Europe", "Northern Europe", "Southern Europe")
+    west <- c(west, "Northern America", "Australia and New Zealand")
+    gapminder <- gapminder %>%
+        mutate(group = case_when(
+                gapminder$region %in% west ~ "The West",
+              gapminder$region %in% "Northern Africa" ~ "Northern Africa",
+              gapminder$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+              gapminder$region == "Southern Asia" ~ "Southern Asia",
+              gapminder$region %in% c("Central America","South America","Caribbean") ~ "Latin America",
+              gapminder$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+              gapminder$region %in% c("Melanesia", "Micronesia", "Polynesia") ~ "Pacific Islands"))
+
+    present_year <- 2010
+    surv_income <- gapminder %>%
+        filter(year %in% present_year & !is.na(gdp) &
+        !is.na(infant_mortality) & !is.na(group)) %>%
+        group_by(group) %>%
+        summarize(income=sum(gdp)/sum(population)/365,
+                  infant_survival_rate=1-sum(infant_mortality/1000*population)/sum(population))
+    surv_income %>% arrange(income)
+    p <- surv_income %>% ggplot(aes(income,infant_survival_rate,label=group,color=group))
+    p <- p + scale_x_continuous(trans="log2",limit=c(0.25,150)) 
+    p <- p + scale_y_continuous(trans="logit",limit=c(0.875,0.9981),
+                                breaks=c(0.85,0.90,0.95,0.99,0.995,0.998))
+    p <- p + geom_label(size=3, show.legend = FALSE)
+    
+    p
+
+}
