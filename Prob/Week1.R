@@ -102,14 +102,14 @@ ex_sapply <- function() {
 
 exact_prob <- function(n) {
     prob_unique <- seq(365,365-n+1)/365
-    1 - prob_unique
+    1 - prod(prob_unique)
 }
 
 exact_prob_sapply <- function() {
     n <- 1:70
     eprob <- sapply(n, exact_prob)  
     ex_sapply()
-    lines(n, eprob, col="red")
+    lines(x=n, y=eprob, type="l", col="red")
 }
 
 whichEnough <- function() {
@@ -122,5 +122,5 @@ whichEnough <- function() {
         mean(same_day)
     }
     prob <- sapply(B, compute_prob)
-    plot(log10(B), prob, type=l)
+    plot(x=log10(B), y=prob, type="l")
 }
