@@ -73,3 +73,54 @@ monte21 <- function() {
   })
   mean(results)
 }
+
+same_birthday <- function() {
+    n <- 50
+    bdays <- sample(1:365, n, replace=TRUE)
+    any(duplicated(bdays))
+    B <- 10000
+    resuls <- replicate(B, {
+        bdays <- sample(1:365, n, replace=TRUE)
+        any(duplicated(bdays))
+    })
+    mean(resuls)
+}
+
+compute_prob <- function(n, B=10000) {
+    same_day <- replicate(B, {
+        bdays <- sample(1:365, n, replace=TRUE)
+        any(duplicated(bdays))
+    })
+    mean(same_day)
+}
+
+ex_sapply <- function() {
+    n <- 1:70
+    prob <- sapply(n, compute_prob)
+    plot(n, prob)
+}
+
+exact_prob <- function(n) {
+    prob_unique <- seq(365,365-n+1)/365
+    1 - prob_unique
+}
+
+exact_prob_sapply <- function() {
+    n <- 1:70
+    eprob <- sapply(n, exact_prob)  
+    ex_sapply()
+    lines(n, eprob, col="red")
+}
+
+whichEnough <- function() {
+    B <- 10^seq(1,5,len=100)
+    compute_prob <- function(B, n=22) {
+        same_day <- replicate(B, {
+        bdays <- sample(1:365, n, replace=TRUE)
+        any(duplicated(bdays))
+        })
+        mean(same_day)
+    }
+    prob <- sapply(B, compute_prob)
+    plot(log10(B), prob, type=l)
+}
