@@ -26,3 +26,20 @@ ex4_1 <- function() {
   #P(S<0) = 0.01
 }
 
+ex4_2 <- function() {
+  r <- 0.05
+  x <- r*180000
+  loss_per_foreclosure*p + x*(1-p)
+  #Pr(S<0) = Pr(Z <(-E[S]/SE[S]))
+  
+  # now the events are not independent
+  p <- 0.04
+  x <- 0.05*180000
+  profit <- replicate(B, {
+      new_p <- 0.04 + sample(seq(-0.01,0.01,length=100),1)
+      draws <- sample(c(x,loss_per_foreclosure),n,
+                        prob=c(1-new_p,new_p),replace=TRUE)
+      sum(draws)
+  })
+}
+
