@@ -124,3 +124,41 @@ pred_elec_college <- function() {
       .$clinton  +7## 7 for Rhode Island and D.C.
   })  
 }
+
+forecasting <- function() {
+    # on one pollster to avoid pollster bias
+    se <- one_pollster <- polls_us_election_2016 %>%
+        filter(pollster=="Ipsos" & state=="U.S.") %>%
+        mutate(spread=rawpoll_clinton/100 - rawpoll_trump/100)
+    se
+    one_pollster %>% ggplot(aes(spread)) +
+        geom_histogram(binwidth=0.01, color="black")
+    # the variability due to time
+    polls_us_election_2016 %>%
+        filter(state=="U.S" & enddate>="2016-07-01") %>%
+        group_by(pollster) %>%
+        filter(n>=10) %>%
+        ungroup() %>%
+        mutate(spread=rawpoll_clinton/100 - rawpoll_trump/100) %>%
+        ggplot(aes(enddate,spread)) +
+        geom_smooth(method="loess", span=0.1) +
+        geom_point(aes(color=pollster),show.legend=FALSE,alpha=0.6)
+    # therefore, we must include time bias into our model
+    # Yijt = d +b + hj + bt + eijt
+    
+    # this to plot the time trend
+    polls_us_election_2016 %>%
+        filter(state=="U.S." & enddate>="2016-07-01") %>%
+        select(enddate,pollster,rawpoll_clinton,rawpoll_trump) %>%
+        rename(Clinton=rawpoll_clinton,Trump=rawpoll_trump) %>%
+        gather(candidate,percentage,-enddate,-pollster) %>%
+        mutate(candidate=factor(candidate,levels=c("Trump","Clinton"))) %>%
+        group_by(pollster) %>%
+        filter(n() >=10) %>%
+        ungroup() %>%
+        ggplot(aes(enddate,percentage,color=candidate)) +
+        geom_point(show.legend=FALSE, alpha=0.4) +
+        geom_smooth(method="loess",span=0.15) +
+        scale_y_continuous(limits=c(30,50))
+    
+}
