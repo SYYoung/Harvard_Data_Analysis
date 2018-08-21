@@ -109,3 +109,14 @@ ex1_bivar1 <- function() {
         facet_wrap(~z_father)
     
 }
+
+ex1_2reg <- function() {
+    galton_heights <- ex1_galton_init()
+    mu_x <- mean(galton_heights$father)
+    mu_y <- mean(galton_heights$son)
+    sd_x <- sd(galton_heights$father)
+    sd_y <- sd(galton_heights$son)
+    r <- cor(galton_heights$father, galton_heights$son)
+    m <- r * sd_x/sd_y
+    b <- mu_x - m * mu_y
+}
