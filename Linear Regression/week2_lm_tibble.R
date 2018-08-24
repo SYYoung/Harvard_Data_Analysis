@@ -55,3 +55,27 @@ ex2_tibb3 <- function() {
     
 }
 
+ex2_init_broom <- function() {
+    library(broom)
+}
+
+ex2_broom1 <- function() {
+    dat <- build_team()
+    fit <- lm(R ~ BB, data=dat)
+    tidy(fit)
+    tidy(fit, conf.int=TRUE)
+    glance(fit)
+}
+
+ex2_broom2 <- function() {
+    dat <- build_team()
+    dat %>%
+        group_by(HR) %>%
+        do(tidy(lm(R~BB, data=.), conf.int=TRUE)) %>%
+        filter(term == "BB") %>%
+        select(HR, estimate,conf.low, conf.high) %>%
+        ggplot(aes(HR, y=estimate, ymin=conf.low, ymax=conf.high)) +
+            geom_errorbar() +
+            geom_point()
+}
+
